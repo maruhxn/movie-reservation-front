@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { IMovieScheduleColumn } from "../page";
+import CellActions from "./cell-actions";
 
 export const movieKeys = [
   "id",
@@ -12,9 +13,10 @@ export const movieKeys = [
   "endTm",
 ] as const;
 
-export const columns: ColumnDef<IMovieScheduleColumn>[] = movieKeys.map(
-  (key) => ({
+export const columns: ColumnDef<IMovieScheduleColumn>[] = [
+  ...movieKeys.map((key) => ({
     accessorKey: key,
     header: key,
-  })
-);
+  })),
+  { id: "actions", cell: ({ row }) => <CellActions data={row.original} /> },
+];

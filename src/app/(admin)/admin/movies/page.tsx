@@ -25,17 +25,17 @@ export default async function MovieListPage() {
 
   return (
     <>
-      <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+      <div className="h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">
-              영화 목록 관리
+              {`영화 목록 관리(${movies.length})`}
             </h2>
             <p className="text-muted-foreground">영화 추가</p>
             <MovieAddForm />
           </div>
         </div>
-        <DataTable data={movies} columns={columns} />
+        <DataTable searchKey="title" data={movies} columns={columns} />
       </div>
     </>
   );

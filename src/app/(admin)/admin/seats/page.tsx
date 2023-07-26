@@ -30,13 +30,13 @@ export default async function SeatManagePage() {
 
   return (
     <>
-      <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+      <div className="h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">좌석 관리</h2>
           </div>
         </div>
-        <DataTable data={seats} columns={columns} />
+        <DataTable searchKey="id" data={seats} columns={columns} />
       </div>
     </>
   );

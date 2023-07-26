@@ -2,6 +2,7 @@
 
 import { IMovie } from "@/types/movie";
 import { ColumnDef } from "@tanstack/react-table";
+import CellActions from "./cell-actions";
 
 export const movieKeys = [
   "id",
@@ -19,7 +20,10 @@ export const movieKeys = [
   "runtime",
 ] as const;
 
-export const columns: ColumnDef<IMovie>[] = movieKeys.map((key) => ({
-  accessorKey: key,
-  header: key,
-}));
+export const columns: ColumnDef<IMovie>[] = [
+  ...movieKeys.map((key) => ({
+    accessorKey: key,
+    header: key,
+  })),
+  { id: "actions", cell: ({ row }) => <CellActions data={row.original} /> },
+];
