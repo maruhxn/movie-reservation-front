@@ -16,10 +16,10 @@ import { getCookie } from "cookies-next";
 import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { FC, useState } from "react";
-import { IMovieScheduleColumn } from "../page";
+import { MovieScheduleColumn } from "../page";
 
 interface CellActionsProps {
-  data: IMovieScheduleColumn;
+  data: MovieScheduleColumn;
 }
 
 const CellActions: FC<CellActionsProps> = ({ data }) => {

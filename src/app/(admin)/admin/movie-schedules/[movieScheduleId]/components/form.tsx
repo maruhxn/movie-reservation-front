@@ -19,14 +19,23 @@ import {
 } from "@/components/ui/Form";
 import { Heading } from "@/components/ui/Heading";
 import { Input } from "@/components/ui/Input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/Select";
 import { Separator } from "@/components/ui/Separator";
 import { useToast } from "@/hooks/use-toast";
+import { IMovie } from "@/types/movie";
 import {
   CreateMovieSchedule,
   CreateMovieScheduleSchema,
   MovieSchedule,
 } from "@/types/movieSchedule";
-import { useMutation } from "@tanstack/react-query";
+import { Screen } from "@/types/screen";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getCookie } from "cookies-next";
 import { parseISO } from "date-fns";
 
@@ -50,6 +59,44 @@ export const MovieScheduleForm: React.FC<MovieScheduleFormProps> = ({
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
+
+  const {
+    isLoading: movieQueryLoading,
+    error: movieError,
+    data: movieData,
+  } = useQuery({
+    queryKey: ["movieData"],
+    queryFn: async () => {
+      const { data } = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/movies`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      return data.data as IMovie[];
+    },
+  });
+
+  const {
+    isLoading: screenQueryLoading,
+    error: screenError,
+    data: screenData,
+  } = useQuery({
+    queryKey: ["screenData"],
+    queryFn: async () => {
+      const { data } = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/screens`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      return data.data as Screen[];
+    },
+  });
 
   const title = initialData ? "Edit MovieSchedule" : "Create MovieSchedule";
   const description = initialData
@@ -82,7 +129,6 @@ export const MovieScheduleForm: React.FC<MovieScheduleFormProps> = ({
         endTm: parseISO(formData.endTm),
       };
       if (initialData) {
-        console.log(payload);
         const { data } = await axios.patch(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/movie-schedules/${params.movieScheduleId}`,
           payload,
@@ -223,80 +269,55 @@ export const MovieScheduleForm: React.FC<MovieScheduleFormProps> = ({
             name="movieId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Select Movie</FormLabel>
-                <FormControl>
-                  <Input
-                    disabled={isLoading}
-                    placeholder="MovieId"
-                    {...field}
-                  />
-                </FormControl>
+                <FormLabel>영화</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="영화를 선택하세요" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {movieData?.map((movie: IMovie) => (
+                      <SelectItem key={movie.id} value={movie.id}>
+                        {movie.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <div className="md:grid md:grid-cols-3 gap-8">
-            <FormField
-              control={form.control}
-              name="screenId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Select Screen</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={isLoading}
-                      placeholder="ScreenId"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {/* <FormField
+          <FormField
             control={form.control}
-            name="startDate"
+            name="screenId"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Date of birth</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-[240px] pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) => date < new Date()}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormDescription>
-                  Your date of birth is used to calculate your age.
-                </FormDescription>
+              <FormItem>
+                <FormLabel>상영관</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="상영관을 선택하세요" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {screenData?.map((screen: Screen) => (
+                      <SelectItem key={screen.id} value={screen.id}>
+                        {screen.screenNum}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
-          /> */}
-
+          />
           <FormField
             control={form.control}
             name="startTm"

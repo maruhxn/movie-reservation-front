@@ -2,9 +2,12 @@ import { Metadata } from "next";
 import { z } from "zod";
 
 import { DataTable } from "@/components/data-table";
+import { buttonVariants } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 import { ScreenSchema } from "@/types/screen";
 import axios from "axios";
 import { cookies } from "next/dist/client/components/headers";
+import Link from "next/link";
 import { columns } from "./components/columns";
 
 export const metadata: Metadata = {
@@ -15,7 +18,7 @@ export const metadata: Metadata = {
 // Simulate a database read for screens.
 async function getScreens() {
   const token = cookies().get("token");
-  const { data } = await axios.get(`${process.env.SERVER_URL}/screen`, {
+  const { data } = await axios.get(`${process.env.SERVER_URL}/screens`, {
     headers: {
       Authorization: "Bearer " + token!.value,
     },
@@ -34,11 +37,19 @@ export default async function ScreenManagePage() {
         <div className="flex items-center justify-between space-y-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">
-              상영관 목록 관리
+              {`상영관 목록 관리(${screens.length})`}
             </h2>
-            {/* <p className="text-muted-foreground">영화 추가</p> */}
-            {/* <MovieAddForm /> */}
           </div>
+          <Link
+            href="/admin/screens/create"
+            className={cn(
+              buttonVariants({
+                variant: "default",
+              })
+            )}
+          >
+            Create
+          </Link>
         </div>
         <DataTable searchKey="screenNum" data={screens} columns={columns} />
       </div>

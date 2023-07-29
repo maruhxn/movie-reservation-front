@@ -32,15 +32,12 @@ async function getReservations() {
 
 export default async function ReservationManagePage() {
   const reservations = await getReservations();
-
   return (
     <>
       <div className="h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">예매 관리</h2>
-            {/* <p className="text-muted-foreground">영화 추가</p> */}
-            {/* <MovieAddForm /> */}
+            <h2 className="text-2xl font-bold tracking-tight">{`예매 관리(${reservations.length})`}</h2>
           </div>
         </div>
         <DataTable searchKey="userId" data={reservations} columns={columns} />

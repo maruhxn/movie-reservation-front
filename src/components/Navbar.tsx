@@ -2,7 +2,7 @@
 
 import useUser from "@/hooks/use-user";
 import { cn } from "@/lib/utils";
-import { IUser } from "@/types/user";
+import { User } from "@/types/user";
 import Image from "next/image";
 import Link from "next/link";
 import SearchBar from "./SearchBar";
@@ -26,7 +26,7 @@ const Navbar = () => {
         <SearchBar />
 
         {user ? (
-          <UserAccountNav user={user as IUser} />
+          <UserAccountNav user={user as User} />
         ) : (
           <div className="space-x-2">
             <Link href="/sign-in" className={buttonVariants()}>

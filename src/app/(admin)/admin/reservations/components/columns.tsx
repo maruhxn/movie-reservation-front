@@ -8,6 +8,8 @@ export const movieKeys = [
   "personAmt",
   "userId",
   "movieScheduleId",
+  "seatIds",
+  "seatNames",
   "createdAt",
   "updatedAt",
 ] as const;

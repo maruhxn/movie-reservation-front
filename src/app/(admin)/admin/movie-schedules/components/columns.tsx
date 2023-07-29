@@ -1,19 +1,12 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { IMovieScheduleColumn } from "../page";
+import { MovieScheduleColumn } from "../page";
 import CellActions from "./cell-actions";
 
-export const movieKeys = [
-  "id",
-  "movie",
-  "screen",
-  "startDate",
-  "startTm",
-  "endTm",
-] as const;
+export const movieKeys = ["id", "movie", "screen", "startTm", "endTm"] as const;
 
-export const columns: ColumnDef<IMovieScheduleColumn>[] = [
+export const columns: ColumnDef<MovieScheduleColumn>[] = [
   ...movieKeys.map((key) => ({
     accessorKey: key,
     header: key,
