@@ -1,6 +1,7 @@
 "use client";
 
 import { useOnClickOutside } from "@/hooks/use-on-click-outside";
+import { IMovie } from "@/types/movie";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import debounce from "lodash.debounce";
@@ -36,12 +37,13 @@ const SearchBar: FC<SearchBarProps> = ({}) => {
     queryFn: async () => {
       if (!input) return [];
       const { data } = await axios.get(
-        `${process.env.SERVER_URL}/search?q=${input}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/search?q=${input}`
       );
-      return data;
-      // return data as (Subreddit & {
-      //   _count: Prisma.SubredditCountOutputType;
-      // })[];
+      return data.data as (IMovie & {
+        _count: {
+          movieSchedules: number;
+        };
+      })[];
     },
     queryKey: ["search-query"],
     enabled: false,
@@ -71,27 +73,28 @@ const SearchBar: FC<SearchBarProps> = ({}) => {
           debounceRequest();
         }}
         className="outline-none border-none focus:border-none focus:outline-none ring-0"
-        placeholder="Search communities..."
+        placeholder="Search movies..."
       />
 
       {input.length > 0 && (
         <CommandList className="absolute bg-white top-full inset-x-0 shadow rounded-b-md">
           {isFetched && <CommandEmpty>No results found.</CommandEmpty>}
           {(queryResults?.length ?? 0) > 0 && (
-            <CommandGroup heading="Communities">
+            <CommandGroup heading="영화">
               {
                 // @ts-ignore
-                queryResults?.map((subreddit) => (
+                queryResults?.map((movie) => (
                   <CommandItem
+                    className="cursor-pointer"
                     onSelect={(e) => {
-                      router.push(`/r/${e}`);
+                      router.push(`/${movie.id}`);
                       router.refresh();
                     }}
-                    key={subreddit.id}
-                    value={subreddit.name}
+                    key={movie.id}
+                    value={movie.title}
                   >
                     <Users className="mr-2 h-4 w-4" />
-                    <a href={`/r/${subreddit.name}`}>r/{subreddit.name}</a>
+                    <a href={`/${movie.id}`}>{movie.title}</a>
                   </CommandItem>
                 ))
               }
